@@ -48,11 +48,6 @@ def generateFilenameFromUrl(url):
 
     imageCache/setname_cardnumber.jpg.
     """
-    #reverse = url[::-1]
-    #filename = reverse[:reverse.find('/')][::-1]
-    #reverse = reverse[reverse.find('/')+1:]
-    #setname = reverse[:reverse.find('/')][::-1]
-    #return 'imageCache/'+ setname + '_' + filename
     return 'imageCache/' + '_'.join(url.split('/')[1:])
 
 def downloadCardImageByUrl(url):
