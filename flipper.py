@@ -52,7 +52,7 @@ def main():
         return
     basicSet = args.basic
     if basicSet != None and not basicSet in ['guru', 'unstable', 'alpha', 'core', 'guay', 'unsanctioned']:
-        print('--basic must be one of the following values: guru, unstable, alpha, core, guay, unsanctioned')
+        print('--basic must be one of the following values: guru, unstable, alpha, core, guay')
         return
 
     generate(args.input, deckName, hires, reprint, nocache, imgur, dropbox, output, basicSet)
@@ -90,6 +90,14 @@ def generate(inputStr, deckName, hires=False, reprint=False, nocache=False, imgu
         ttsJsonFilename = os.path.join(output, deckName+'.json')
         with open(ttsJsonFilename, 'w',encoding='utf8') as outfile:
             json.dump(ttsJson, outfile, indent=2)
+        if dropboxToken:
+            print('Uploading file ' + ttsJsonFilename + ' to Dropbox!')
+            queue.sendMessage({'type':'message', 'text':'Uploading file ' + ttsJsonFilename + ' to Dropbox!'})
+            dbx = dropbox.Dropbox(dropboxToken)
+            with open(ttsJsonFilename, 'rb') as jsonFp:
+                data = jsonFp.read()
+            dropboxPath = '/TTS_Assets/'+ttsJsonFilename
+            dbx.files_upload(data, dropboxPath)
         queue.sendMessage({'type':'done'})
         print('All done')
     except:
@@ -190,7 +198,26 @@ def getDecklist(inputStr):
         elif re.search('scryfall', inputStr):
             key = inputStr.split('/')[-1]
             response = requests.get(f'https://api.scryfall.com/decks/{key}/export/text')
-            decklist = [line for line in response.text.split('\r\n') if not line.startswith('//')]
+            decklist = [line for line in response.text.split('\r\n')]
+        elif re.search('archidekt', inputStr):
+            key = inputStr.split('/')[-1].split('#')[0]
+            response = requests.get(f'https://archidekt.com/api/decks/{key}/small/')
+            deckObj = json.loads(response.text)
+            cards = deckObj['cards']
+            decklists = {}
+            for card in cards:
+                category = card['category'].lower() if card['category'].lower() in ['commander', 'sideboard'] else ''
+                cardName = f"{card['quantity']} {card['card']['oracleCard']['name']}"
+                if category not in decklists:
+                    decklists[category] = [cardName]
+                else:
+                    decklists[category].append(cardName)
+            decklist = []
+            for category in decklists:
+                if category:
+                    decklist.append(f'//{category}')
+                for card in decklists[category]:
+                    decklist.append(card)
         else:
             print('Input URL must be to either to https://deckbox.org or https://tappedout.net.')
             queue.sendMessage({'type':'error', 'text':'Input URL must be either to https://deckbox.org or https://tappedout.net'})
