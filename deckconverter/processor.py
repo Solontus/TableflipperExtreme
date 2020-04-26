@@ -200,22 +200,20 @@ def generateProcessedCardEntry(cardName, reprint, basicSet=None):
     """
     # Let's handle basics separately, since they are printed in every damn set. Guru lands are best.
     global basics
-    set = ''
-    number = ''
+    set_ = ''
+    number_ = ''
     if cardName.lower() in ['forest','island','mountain','plains','swamp']:
         if basicSet:
-            set = f"set:{basics[basicSet][cardName.lower()]['set']}"
-            number = f"number:{basics[basicSet][cardName.lower()]['number']}"
-            #return (basics[basicSet][cardName.lower()],[])
+            set_ = f"set:{basics[basicSet][cardName.lower()]['set']}"
+            number_ = f"number:{basics[basicSet][cardName.lower()]['number']}"
         else:
-            set = f"set:{basics['guru'][cardName.lower()]['set']}"
-            number = f"number:{basics['guru'][cardName.lower()]['number']}"
-            #return (basics['guru'][cardName.lower()],[])
+            set_ = f"set:{basics['guru'][cardName.lower()]['set']}"
+            number_ = f"number:{basics['guru'][cardName.lower()]['number']}"
 
     if reprint:
-        response = scryfall.doRequest('https://api.scryfall.com/cards/search',{'q':'!"' + cardName + '" ' + set + ' ' + number})
+        response = scryfall.doRequest('https://api.scryfall.com/cards/search',{'q':'!"' + cardName + '" ' + set_ + ' ' + number_})
     else:
-        response = scryfall.doRequest('https://api.scryfall.com/cards/search',{'q':'!"' + cardName + '" ' + set + ' ' + number})
+        response = scryfall.doRequest('https://api.scryfall.com/cards/search',{'q':'!"' + cardName + '" ' + set_ + ' ' + number_})
 
 
     if response['object'] == 'error':
