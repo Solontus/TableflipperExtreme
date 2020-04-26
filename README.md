@@ -46,15 +46,18 @@ The format of the plaintext file is the same as when exporting as a .txt file fr
     4 Urborg, Tomb of Yawgmoth
     4 Wrench Mind
 
-    Sideboard:
+    //Sideboard
     2 Darkblast
     2 Dismember
     2 Extirpate
     4 Grafdigger's Cage
     2 Surgical Extraction
     3 Torpor Orb
+    
+    //Oathbreaker
+    1 Jace Beleren
 
-Sideboard is supported, and reading the decklist is done case-insensitively. If the card count is missing, it is assumed to be 1.
+Sideboard is supported, and reading the decklist is done case-insensitively. Commander/Oathbreaker section is also supported. If the card count is missing, it is assumed to be 1.
 
 Also, instead of giving card names, it is possible to just list the URLs to their respective scryfall pages. This mode is very useful for generating tokens and getting specific prints of cards. For example, the example below will result in a deck consisting of Krenko and a Goblin token.
 
