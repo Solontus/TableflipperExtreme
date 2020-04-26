@@ -54,8 +54,10 @@ def processDecklist(decklist, reprint=False, basicSet=None):
     """
     processedDecklist = []
     processedDecklistSideboard = []
+    processedDecklistCommander = []
     processedFlipCards = []
     sideboard = False
+    commander = False
     lineNumber = 1
     lineCount = len(decklist)
     for line in decklist:
@@ -63,9 +65,15 @@ def processDecklist(decklist, reprint=False, basicSet=None):
             queue.flipperQueue.put({'type':'message','text':'Processing line ('+str(lineNumber)+'/'+str(lineCount)+')'})
         lineNumber += 1
         # Checking if we are in sideboard territory.
-        if line.strip().lower() == 'sideboard:':
+        if line.strip().lower().startswith('//') and ('sideboard' in line.strip().lower()):
             print('Switching to sideboard')
+            commander = False
             sideboard = True
+            continue;
+        elif line.strip().lower().startswith('//') and ('commander' in line.strip().lower() or 'oathbreaker' in line.strip().lower()):
+            print('Switching to commander')
+            sideboard = False
+            commander = True
             continue;
         cardName, count = parseDecklistLine(line.strip())
         if cardName == None:
@@ -96,13 +104,15 @@ def processDecklist(decklist, reprint=False, basicSet=None):
             for i in range(count):
                 if sideboard:
                     processedDecklistSideboard.append(processedCard)
+                elif commander:
+                    processedDecklistCommander.append(processedCard)
                 else:
                     processedDecklist.append(processedCard)
             processedFlipCards += extra
         else:
             print("Couldn't find card, line: " +  line)
 
-    return (processedDecklist, processedDecklistSideboard, processedFlipCards)
+    return (processedDecklist, processedDecklistSideboard, processedDecklistCommander, processedFlipCards)
 
 def parseDecklistLine(line):
     """
@@ -190,20 +200,22 @@ def generateProcessedCardEntry(cardName, reprint, basicSet=None):
     """
     # Let's handle basics separately, since they are printed in every damn set. Guru lands are best.
     global basics
-    set_ = ''
-    number_ = ''
+    set = ''
+    number = ''
     if cardName.lower() in ['forest','island','mountain','plains','swamp']:
         if basicSet:
-            set_ = f"set:{basics[basicSet][cardName.lower()]['set']}"
-            number_ = f"number:{basics[basicSet][cardName.lower()]['number']}"
+            set = f"set:{basics[basicSet][cardName.lower()]['set']}"
+            number = f"number:{basics[basicSet][cardName.lower()]['number']}"
+            #return (basics[basicSet][cardName.lower()],[])
         else:
-            set_ = f"set:{basics['guru'][cardName.lower()]['set']}"
-            number_ = f"number:{basics['guru'][cardName.lower()]['number']}"
+            set = f"set:{basics['guru'][cardName.lower()]['set']}"
+            number = f"number:{basics['guru'][cardName.lower()]['number']}"
+            #return (basics['guru'][cardName.lower()],[])
 
     if reprint:
-        response = scryfall.doRequest('https://api.scryfall.com/cards/search',{'q':'!"'+cardName+'" ' + set_ + ' ' + number_})
+        response = scryfall.doRequest('https://api.scryfall.com/cards/search',{'q':'!"' + cardName + '" ' + set + ' ' + number})
     else:
-        response = scryfall.doRequest('https://api.scryfall.com/cards/search',{'q':'!"'+cardName+'" ' + set_ + ' ' + number_})
+        response = scryfall.doRequest('https://api.scryfall.com/cards/search',{'q':'!"' + cardName + '" ' + set + ' ' + number})
 
 
     if response['object'] == 'error':
@@ -291,5 +303,3 @@ def generateDraftPackLists(setName, packCount):
         packIndex = packIndex + 1
     
     return packs
-
-
