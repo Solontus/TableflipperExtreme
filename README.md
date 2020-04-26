@@ -68,7 +68,7 @@ To create a decklist using an URL, simply supply the URL to your decklist as you
 
     python flipper.py -n 8-Rack "http://tappedout.net/mtg-decks/mono-black-8-rack-modern-discard/"
 
-This works with deckbox.org URLs aswell.
+This works with deckbox.org, archidekt, and scryfall URLs as well.
 
 ## Getting the results into Tabletop Simulator
 
@@ -97,6 +97,8 @@ By default, Tableflipper Extreme uses Guru basics. However, by using the `--basi
 `guru`: These are the premium guru basic lands by Terese Nielsen.
 
 `unstable`: New full art lands from the Unstable set, by John Avon.
+
+`unsanctioned`: Full art lands from the Unsanctioned set.
 
 `alpha`: From the original Limited Edition Alpha set, by various artists.
 
