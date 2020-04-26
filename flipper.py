@@ -52,7 +52,7 @@ def main():
         return
     basicSet = args.basic
     if basicSet != None and not basicSet in ['guru', 'unstable', 'alpha', 'core', 'guay', 'unsanctioned']:
-        print('--basic must be one of the following values: guru, unstable, alpha, core, guay')
+        print('--basic must be one of the following values: guru, unstable, alpha, core, guay', 'unsanctioned')
         return
 
     generate(args.input, deckName, hires, reprint, nocache, imgur, dropbox, output, basicSet)
