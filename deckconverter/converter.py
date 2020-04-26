@@ -14,7 +14,7 @@ def convertDecklistToJSON(decklist, deckName, hires, reprint, nocache=False, img
     if (nocache):
         scryfall.bustCache()
 
-    processedDecklist,processedDecklistSideboard,processedExtraCards = processor.processDecklist(decklist, reprint, basicSet)
+    processedDecklist,processedDecklistSideboard,processedCommander,processedExtraCards = processor.processDecklist(decklist, reprint, basicSet)
 
     if (nocache == False):
         scryfall.dumpCacheToFile()
@@ -28,6 +28,8 @@ def convertDecklistToJSON(decklist, deckName, hires, reprint, nocache=False, img
         posX += 4.0
     if (processedExtraCards):
         deckObjects.append(generateDeckObjectFromProcessedDecklist(processedExtraCards, deckName+'-extra', posX, hires, doubleSided=True, imgurId=imgurId, dropboxToken=dropboxToken, output=output))
+    if (processedCommander):
+        deckObjects.append(generateDeckObjectFromProcessedDecklist(processedCommander, deckName+'-commander', posX, hires, imgurId=imgurId, dropboxToken=dropboxToken, output=output))
 
     return {'ObjectStates':deckObjects}
 
@@ -134,8 +136,7 @@ def uploadToDropbox(deckImage, dropboxToken, output):
     dbx = dropbox.Dropbox(dropboxToken)
     with open(imagePath, 'rb') as imageFp:
         data = imageFp.read()
-    dropboxPath = '/'+deckImage
+    dropboxPath = '/TTS_Assets/'+deckImage
     dbx.files_upload(data, dropboxPath)
     share = dbx.sharing_create_shared_link(dropboxPath)
     return share.url.replace('dl=0','raw=1')
-
