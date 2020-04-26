@@ -38,7 +38,7 @@ def downloadCardImage(processedCard):
         imageUrls = processedCard['image_urls']
     else:
         imageUrls = ['https://img.scryfall.com/cards/large/en/' + processedCard['set'].lower() + '/' + processedCard['number'] + '.jpg']
-
+    
     for imageUrl in imageUrls:
         downloadCardImageByUrl(imageUrl)
 
@@ -48,7 +48,12 @@ def generateFilenameFromUrl(url):
 
     imageCache/setname_cardnumber.jpg.
     """
-    return '_'.join(url.split('/')[1:])
+    #reverse = url[::-1]
+    #filename = reverse[:reverse.find('/')][::-1]
+    #reverse = reverse[reverse.find('/')+1:]
+    #setname = reverse[:reverse.find('/')][::-1]
+    #return 'imageCache/'+ setname + '_' + filename
+    return 'imageCache/' + '_'.join(url.split('/')[1:])
 
 def downloadCardImageByUrl(url):
     """
